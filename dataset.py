@@ -48,20 +48,20 @@ class MultiResolutionDataset(Dataset):
 import h5py
 
 class NaiveDataset(Dataset):
-    def __init__(self, data_dir,norm=False):
+    def __init__(self, data_dir,transform):
       
         with h5py.File(data_dir, 'r') as F:
             images = np.array(F['images'])
             labels = np.array(F['ans'])
 
-        total_data=np.transpose(images[:10000],axes=(0,3,1,2))
+        self.transform=transform
+        # total_data=np.transpose(images[:10000],axes=(0,3,1,2))
+        total_data=images[:10000]
+        
             
         logging.info(f'Creating dataset with {total_data.shape[0]} examples')
 
-        if norm:
-            self.total_data=self.preprocess(total_data,tp='data',mean=self.data_mean,std=self.data_std)
-        else:
-            self.total_data=total_data
+        self.total_data=total_data
 
     def __len__(self):
         return (self.total_data.shape[0])
@@ -75,6 +75,5 @@ class NaiveDataset(Dataset):
     def __getitem__(self, i):
         data=self.total_data[i]
 
-        return {
-            'data': torch.from_numpy(data).type(torch.FloatTensor),
-        }
+        return  self.transform(Image.fromarray(data))
+   

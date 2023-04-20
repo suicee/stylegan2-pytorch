@@ -19,7 +19,7 @@ except ImportError:
     wandb = None
 
 
-from dataset import MultiResolutionDataset
+from dataset import MultiResolutionDataset,NaiveDataset
 from distributed import (
     get_rank,
     synchronize,
@@ -302,7 +302,7 @@ def train(args, loader, generator, discriminator, g_optim, d_optim, g_ema, devic
                     }
                 )
 
-            if i % 100 == 0:
+            if i % 50 == 0:
                 with torch.no_grad():
                     g_ema.eval()
                     sample, _ = g_ema([sample_z])
@@ -337,7 +337,7 @@ if __name__ == "__main__":
     parser.add_argument("path", type=str, help="path to the lmdb dataset")
     parser.add_argument('--arch', type=str, default='stylegan2', help='model architectures (stylegan2 | swagan)')
     parser.add_argument(
-        "--iter", type=int, default=800000, help="total training iterations"
+        "--iter", type=int, default=100000, help="total training iterations"
     )
     parser.add_argument(
         "--batch", type=int, default=16, help="batch sizes for each gpus"
@@ -517,7 +517,8 @@ if __name__ == "__main__":
         ]
     )
 
-    dataset = MultiResolutionDataset(args.path, transform, args.size)
+    # dataset = MultiResolutionDataset(args.path, transform, args.size)
+    dataset = NaiveDataset(args.path,transform)
     loader = data.DataLoader(
         dataset,
         batch_size=args.batch,

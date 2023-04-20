@@ -131,3 +131,7 @@ dmypy.json
 wandb/
 *.lmdb/
 *.pkl
+
+# output files and pbs
+*.o*
+*pbs
