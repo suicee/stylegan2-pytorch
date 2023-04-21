@@ -135,3 +135,6 @@ wandb/
 # output files and pbs
 *.o*
 *pbs
+
+# sub package
+get_data_des
